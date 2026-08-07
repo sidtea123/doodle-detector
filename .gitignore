@@ -3,6 +3,9 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+# massive csv
+doodle_data/
+
 # C extensions
 *.so
 
