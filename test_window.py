@@ -25,7 +25,7 @@ def evaluate():
         # don't even ask, I don't know how it works either
         output = dict(zip(categories, dist.tolist()))
         sorted_data = dict(sorted(output.items(), key=lambda item: item[1], reverse=True))
-        prediction_label.config(text=f'Predictions:\n{"\n".join(f'{k}: {v*100:0.2f}%' for i, (k, v) in enumerate(sorted_data.items()) if i < 5)}\n...')
+        prediction_label.config(text=f'{'_' * 20}\n\nPredictions:\n{"\n".join(f'{k}: {v*100:0.2f}%' for k, v in sorted_data.items())}\n{'_' * 20}')
 
 def draw(event):
     p_w = int(canvas.cget('width')) // 28
@@ -93,15 +93,15 @@ root = tk.Tk()
 root.geometry('630x570')
 
 canvas = tk.Canvas(root, width=476, height=476)
-canvas.place(anchor='n', x=250, y=(500-476)/2 + 30)
+canvas.place(anchor='n', x=250, y=(500-476)/2 + 35)
 
 canvas.bind('<Button-1>', draw)
 canvas.bind('<B1-Motion>', draw)
 
 pixels = np.zeros((28, 28))
 p_w = int(canvas.cget('width')) // 28
-gray = 140
-light_gray = 70
+gray = 80
+light_gray = 60
 DO_ERASER = False
 DO_BLUR = True
 
@@ -111,16 +111,16 @@ title = tk.Label(root, text='Drawing Classifier (CNN)', font=("Helvetica", 20, "
 title.place(anchor='n', x=630//2, y=5)
 
 clear_btn = tk.Button(root, text='Clear', command=clear)
-clear_btn.place(anchor='n', x=100, y=530)
+clear_btn.place(anchor='n', x=100, y=535)
 
 random_btn = tk.Button(root, text='Random Image', command=random_test)
-random_btn.place(anchor='n', x=250, y=530)
+random_btn.place(anchor='n', x=250, y=535)
 
 eraser_btn = tk.Button(root, text="Eraser", command=eraser)
-eraser_btn.place(anchor='n', x=400, y=530)
+eraser_btn.place(anchor='n', x=400, y=535)
 
 prediction_label = tk.Label(root, text='No Prediction...', justify='left')
-prediction_label.place(anchor='nw', x=500, y=(500-476)/2 + 30)
+prediction_label.place(anchor='nw', x=500, y=(500-476)/2 + 35)
 
 evaluate()
 

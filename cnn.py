@@ -32,7 +32,7 @@ if __name__ == '__main__':
     data_loader = generate_dataset_and_loader(images, labels, BATCH_SIZE)
 
     epochs = 40
-    lr = 0.001
+    lr = 0.00001
 
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     loss_function = nn.CrossEntropyLoss()
