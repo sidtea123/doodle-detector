@@ -1,4 +1,4 @@
 # doodle-detector
-Detects doodles.
+Detects doodles. Run cnn.py to train, test_window.py to test.
 
-Dataset "master_doodle_dataframe.csv" is sourced from kaggle.com and is licensed under CC BY 4.0.
+Dataset is a sampling of the .npy files provided by google's Quick, Draw! dataset. See data_manager.py to see which categories are used.
