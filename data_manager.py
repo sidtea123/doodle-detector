@@ -48,7 +48,8 @@ categories = [
     'zebra'
 ]
 
-CATEGORY_SIZE = 7500
+# total size ~145,000
+CATEGORY_SIZE = 8196
 TEST_CATEGORY_SIZE = 500
 BATCH_SIZE = 128
 NUM_CATEGORIES = len(categories)
