@@ -1,7 +1,7 @@
 # doodle-detector
-Detects doodles. Run cnn.py to train, test_window.py to test.
+Detects doodles. Run cnn.py to train, cnn_tester.py to test, and test_window.py to play around with it.
 
-Dataset is a sampling of the .npy files provided by google's Quick, Draw! dataset. See data_manager.py to see which categories are used.
+Dataset is a sampling of 23 of the .npy files provided by Google's Quick, Draw! dataset. See data_manager.py to see which categories are used and how many images were sampled.
 
 Here is the model in action:
 
