@@ -103,7 +103,7 @@ p_w = int(canvas.cget('width')) // 28
 gray = 80
 light_gray = 60
 DO_ERASER = False
-DO_BLUR = True
+DO_BLUR = False
 
 draw_pixels()
 

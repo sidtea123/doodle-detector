@@ -1,6 +1,7 @@
 import numpy as np
 import torch
 from torch.utils.data import DataLoader, Dataset
+from torchvision.transforms import v2
 
 class DoodleDataset(Dataset):
     def __init__(self, images, labels):
@@ -8,12 +9,19 @@ class DoodleDataset(Dataset):
 
         self.data = self.data.share_memory_()
         self.labels = self.labels.share_memory_()
+
+        self.transforms = v2.Compose([
+            v2.RandomRotation(degrees=10),
+            v2.RandomHorizontalFlip(p=0.5),
+            v2.RandomResizedCrop(size=(28,28), scale=(0.7,1.0), ratio=(0.9, 1.1), antialias=True)
+        ])
     
     def __len__(self):
         return len(self.labels)
 
     def __getitem__(self, idx):
-        return self.data[idx], self.labels[idx]
+        
+        return self.transforms(self.data[idx]), self.labels[idx]
 
 def generate_dataset_and_loader(images, labels, batch_size):
     dataset = DoodleDataset(images, labels)
@@ -49,13 +57,13 @@ categories = [
 ]
 
 # total size ~145,000
-CATEGORY_SIZE = 8196
+CATEGORY_SIZE = 10000
 TEST_CATEGORY_SIZE = 500
 BATCH_SIZE = 128
 NUM_CATEGORIES = len(categories)
 IMAGE_WIDTH = 28
 TOTAL_LENGTH = CATEGORY_SIZE * NUM_CATEGORIES
-MODEL_URL = 'CNN_Model.pt'
+MODEL_URL = 'models/CNN_Model.pt'
 
 def read_files():
     print('\nnow parsing data...\n')

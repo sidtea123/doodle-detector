@@ -6,29 +6,25 @@ from data_manager import *
 class DoodleIdentifier(nn.Module):
     def __init__(self):
         super().__init__()
-        
+
         self.network = nn.Sequential(
             nn.Conv2d(in_channels=1, out_channels=32, kernel_size=3, padding=1),
             nn.ReLU(),
             nn.BatchNorm2d(num_features=32),
             nn.MaxPool2d(kernel_size=2, stride=2),
-            nn.Dropout(p=0.1),
 
             nn.Conv2d(in_channels=32, out_channels=64, kernel_size=3, padding=1),
             nn.ReLU(),
             nn.BatchNorm2d(num_features=64),
             nn.MaxPool2d(kernel_size=2, stride=2),
-            nn.Dropout(p=0.1),
 
             nn.Conv2d(in_channels=64, out_channels=128, kernel_size=3, padding=1),
             nn.ReLU(),
             nn.BatchNorm2d(num_features=128),
-            nn.Dropout(p=0.2),
 
             nn.Flatten(start_dim=1),
             nn.Linear(in_features=128*7*7, out_features=256),
             nn.ReLU(),
-            nn.Dropout(0.2),
             nn.Linear(in_features=256, out_features=23)
         )
 
@@ -46,12 +42,14 @@ if __name__ == '__main__':
     lr = 0.001
 
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
-    loss_function = nn.CrossEntropyLoss(label_smoothing=0.02)
+    loss_function = nn.CrossEntropyLoss()
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=len(data_loader) * epochs, eta_min=1e-6)
 
     print(f'\nfinished preparing model, now running on {device}...\n')
 
     for epoch in range(1, epochs + 1):
+        mismatches = 0
+        total_loss = 0
         for x, y in data_loader:
             x = x.to(device, non_blocking=True)
             y = y.to(device, non_blocking=True)
@@ -64,16 +62,17 @@ if __name__ == '__main__':
             optimizer.step()
             scheduler.step()
 
-        predictions = torch.argmax(y_hat, dim=1)
-        mismatches = (predictions != y).sum().item()
+            mismatches += (torch.argmax(y_hat, dim=1) != y).sum().item()
+            total_loss += loss.item() * y.size(0) 
+
         print(f'\nProgress at epoch {epoch}:')
-        print(f'training accuracy: {((len(y)-mismatches)/len(y) * 100):.2f}%')
-        print(f'loss: {loss.item()}')
+        print(f'training accuracy: {((len(labels)-mismatches)/len(labels) * 100):.2f}%')
+        print(f'loss: {total_loss / TOTAL_LENGTH}')
         print(f'lr: {optimizer.param_groups[0]['lr']}')
         torch.save(model.state_dict(), MODEL_URL)
         print(f'saved current model state to {MODEL_URL}.\n')
 
-    print(f'\n\nfinished training with final accuracy: {((len(y)-mismatches)/len(y) * 100):.2f}%')
+    print('\nfinished!')
     print(f'now saving model to {MODEL_URL}...\n')
     torch.save(model.state_dict(), MODEL_URL)
     print('save complete!')
