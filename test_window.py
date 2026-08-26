@@ -25,7 +25,7 @@ def evaluate():
         # don't even ask, I don't know how it works either
         output = dict(zip(categories, dist.tolist()))
         sorted_data = dict(sorted(output.items(), key=lambda item: item[1], reverse=True))
-        prediction_label.config(text=f'{'_' * 20}\n\nPredictions:\n{"\n".join(f'{k}: {v*100:0.2f}%' for k, v in sorted_data.items())}\n{'_' * 20}')
+        prediction_label.config(text=f'{'_' * 20}\n\nPredictions:\n{"\n".join(f'{k}: {v*100:0.2f}%' for i, (k, v) in enumerate(sorted_data.items()) if i < 25)}\n...\n{'_' * 20}')
 
 def draw(event):
     p_w = int(canvas.cget('width')) // 28
@@ -83,14 +83,16 @@ def draw_rect(x, y, col):
         pixels[y,x] = col
         evaluate()
 
-images, _ = get_testing_data()
-images = np.squeeze(images, axis=1)
+# images, _ = get_testing_data()
+# images = np.squeeze(images, axis=1)
 model = DoodleIdentifier()
 model.load_state_dict(torch.load(MODEL_URL, weights_only=True))
 model.eval()
 
+width = 680
+height = 570
 root = tk.Tk()
-root.geometry('630x570')
+root.geometry(f'{width}x{height}')
 
 canvas = tk.Canvas(root, width=476, height=476)
 canvas.place(anchor='n', x=250, y=(500-476)/2 + 35)
@@ -108,13 +110,13 @@ DO_BLUR = False
 draw_pixels()
 
 title = tk.Label(root, text='Drawing Classifier (CNN)', font=("Helvetica", 20, "bold"))
-title.place(anchor='n', x=630//2, y=5)
+title.place(anchor='n', x=680//2, y=5)
 
 clear_btn = tk.Button(root, text='Clear', command=clear)
 clear_btn.place(anchor='n', x=100, y=535)
 
-random_btn = tk.Button(root, text='Random Image', command=random_test)
-random_btn.place(anchor='n', x=250, y=535)
+# random_btn = tk.Button(root, text='Random Image', command=random_test)
+# random_btn.place(anchor='n', x=250, y=535)
 
 eraser_btn = tk.Button(root, text="Eraser", command=eraser)
 eraser_btn.place(anchor='n', x=400, y=535)

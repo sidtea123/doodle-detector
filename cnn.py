@@ -2,6 +2,8 @@ import torch
 import torch.nn as nn
 
 from data_manager import *
+import os
+os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
 
 class DoodleIdentifier(nn.Module):
     def __init__(self):
@@ -25,7 +27,7 @@ class DoodleIdentifier(nn.Module):
             nn.Flatten(start_dim=1),
             nn.Linear(in_features=128*7*7, out_features=256),
             nn.ReLU(),
-            nn.Linear(in_features=256, out_features=23)
+            nn.Linear(in_features=256, out_features=NUM_CATEGORIES)
         )
 
     def forward(self, x):
@@ -33,12 +35,13 @@ class DoodleIdentifier(nn.Module):
 
 if __name__ == '__main__':
     device = "cuda" if torch.cuda.is_available() else "cpu"
+    # device = 'cpu'
     model = DoodleIdentifier().to(device, non_blocking=True)
 
     images, labels = read_files()
     data_loader = generate_dataset_and_loader(images, labels, BATCH_SIZE)
 
-    epochs = 20
+    epochs = 15
     lr = 0.001
 
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
@@ -55,6 +58,7 @@ if __name__ == '__main__':
             y = y.to(device, non_blocking=True)
 
             y_hat = model(x)
+
             loss = loss_function(y_hat, y)
 
             optimizer.zero_grad()
